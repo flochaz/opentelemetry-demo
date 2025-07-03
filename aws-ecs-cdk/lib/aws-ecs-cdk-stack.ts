@@ -4,10 +4,12 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as elasticache from 'aws-cdk-lib/aws-elasticache';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as servicediscovery from 'aws-cdk-lib/aws-servicediscovery';
 
 import { Construct } from 'constructs';
+import path from 'path';
 
 // Global domain name constant
 const DOMAIN_NAME = 'opentelemetry-demo.local';
@@ -86,7 +88,6 @@ export class AwsEcsCdkStack extends cdk.Stack {
     jaeger: DemoService;
   }) {
 
-    // Flagd (feature flagging service)
     const flagd = this.createService('flagd', {
       image: 'ghcr.io/open-feature/flagd:v0.12.5',
       port: 8013,
@@ -199,9 +200,12 @@ export class AwsEcsCdkStack extends cdk.Stack {
       }
     });
 
-    // Product Catalog Service
+    // Product Catalog Service - custom image with products
+    const productCatalogAsset = new DockerImageAsset(this, 'ProductCatalogAsset', {
+      directory: path.join(__dirname, '../../src/product-catalog') ,
+    });
     const productCatalog = this.createService('product-catalog', {
-      image: 'ghcr.io/open-telemetry/demo:latest-product-catalog',
+      image: productCatalogAsset.imageUri,
       port: 3550,
       cpu: 256,
       memory: 512,
