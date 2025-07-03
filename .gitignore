@@ -15,7 +15,6 @@ docker-compose.override.yml
 .classpath
 .project
 .settings
-
 bin/
 obj/
 .vs/
@@ -52,3 +51,4 @@ test/tracetesting/tracetesting-vars.yaml
 *.apk
 
 !src/currency/build
+!aws-ecs-cdk/bin
