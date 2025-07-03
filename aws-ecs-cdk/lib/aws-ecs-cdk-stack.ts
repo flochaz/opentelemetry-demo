@@ -535,7 +535,7 @@ export class AwsEcsCdkStack extends cdk.Stack {
         publicLoadBalancer: true,
         listenerPort: config.port,
         serviceName: name,
-        desiredCount: 1,
+        desiredCount: name === 'flagd' ? 0 : 1, // TODO fix flagd container by adding a Dockerfile in flagd src and change image URI to a DockerImageAsset
         securityGroups,
       });
       // Output the service endpoint if it's public
@@ -564,7 +564,7 @@ export class AwsEcsCdkStack extends cdk.Stack {
         cluster: this.cluster,
         taskDefinition,
         serviceName: name,
-        desiredCount: 1,
+        desiredCount: name === 'flagd' ? 0 : 1, // TODO fix flagd container by adding a Dockerfile in flagd src and change image URI to a DockerImageAsset
         securityGroups,
         cloudMapOptions: {
           name: name,
